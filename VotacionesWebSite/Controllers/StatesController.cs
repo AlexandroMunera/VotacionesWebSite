@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using VotacionesWebSite.Models;
 
 namespace VotacionesWebSite.Controllers
 {
+    [Authorize]
     public class StatesController : Controller
     {
         private VotacionesContext db = new VotacionesContext();
@@ -34,6 +36,23 @@ namespace VotacionesWebSite.Controllers
             db.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+        
+        public ActionResult Edit(int? id)
+        {
+            if(id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var state = db.States.Find(id);
+
+            if(state == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(state);
         }
 
 

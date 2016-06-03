@@ -108,3 +108,6 @@ C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\es\Mi
 C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\obj\Debug\VotacionesWebSite.csprojResolveAssemblyReference.cache
 C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\obj\Debug\VotacionesWebSite.dll
 C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\obj\Debug\VotacionesWebSite.pdb
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\obj\Debug\VotacionesWebSite.Migrations.InitialCreate.resources
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\obj\Debug\VotacionesWebSite.csproj.GenerateResource.Cache
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\obj\Debug\VotacionesWebSite.Migrations._20160602.resources
