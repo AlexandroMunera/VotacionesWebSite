@@ -12,6 +12,8 @@ namespace VotacionesWebSite.Models
 
         public DbSet<State> States { get; set; }
 
-        public System.Data.Entity.DbSet<VotacionesWebSite.Models.Group> Groups { get; set; }
+        public DbSet<Group> Groups { get; set; }
+
+        public DbSet<Voting> Votings { get; set; }
     }
 }

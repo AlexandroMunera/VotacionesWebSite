@@ -210,6 +210,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\StatesController.cs" />
+    <Compile Include="Controllers\VotingsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -302,6 +303,11 @@
     <Content Include="Views\Groups\Details.cshtml" />
     <Content Include="Views\Groups\Edit.cshtml" />
     <Content Include="Views\Groups\Index.cshtml" />
+    <Content Include="Views\Votings\Create.cshtml" />
+    <Content Include="Views\Votings\Delete.cshtml" />
+    <Content Include="Views\Votings\Details.cshtml" />
+    <Content Include="Views\Votings\Edit.cshtml" />
+    <Content Include="Views\Votings\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

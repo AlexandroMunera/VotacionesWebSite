@@ -14,6 +14,10 @@ namespace VotacionesWebSite.Models
 
         [Required(ErrorMessage = "The field {0} is required")]
         [StringLength(50,ErrorMessage = "The field {0} must contain maximum {1} and minimum {2} characteres", MinimumLength = 3)]
+        [Display(Name = " State description")]
         public string Description { get; set; }
+
+        //Relations
+        public virtual ICollection<Voting> Votings { get; set; }
     }
 }
