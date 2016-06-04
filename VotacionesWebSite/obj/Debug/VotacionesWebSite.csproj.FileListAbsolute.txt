@@ -111,3 +111,17 @@ C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\obj\Debug
 C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\obj\Debug\VotacionesWebSite.Migrations.InitialCreate.resources
 C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\obj\Debug\VotacionesWebSite.csproj.GenerateResource.Cache
 C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\obj\Debug\VotacionesWebSite.Migrations._20160602.resources
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\csc.exe.config
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\csc.rsp
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\csi.exe
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\csi.rsp
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\System.AppContext.dll
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\System.Diagnostics.StackTrace.dll
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\System.IO.FileSystem.dll
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\System.IO.FileSystem.Primitives.dll
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\vbc.exe.config
+C:\Users\freud.munera\Source\Repos\VotacionesWebSite\VotacionesWebSite\bin\roslyn\vbc.rsp

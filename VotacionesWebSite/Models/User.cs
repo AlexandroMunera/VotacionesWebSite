@@ -37,7 +37,6 @@ namespace VotacionesWebSite.Models
 
         public string Group { get; set; }
 
-        [StringLength(200, ErrorMessage = "The field {0} must contain maximum {1} and minimum {2} characteres", MinimumLength = 5)]
         [DataType(DataType.ImageUrl)]
         public string Photo { get; set; }
 

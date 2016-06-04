@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace VotacionesWebSite.Models
 {
@@ -9,6 +10,13 @@ namespace VotacionesWebSite.Models
         {
 
         }
+
+        // this method is used to "disable" the cascade deleting mode
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+        }
+
 
         public DbSet<State> States { get; set; }
 
