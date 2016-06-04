@@ -15,6 +15,52 @@ namespace VotacionesWebSite.Controllers
     {
         private VotacionesContext db = new VotacionesContext();
 
+        public ActionResult AddMember(int id)
+        {
+            var groupId = id;           
+
+            ViewBag.UserId = new SelectList(db.Users.OrderBy(p => p.FirstName).ThenBy(p => p.LastName), "UserId", "FullName");
+
+            var view = new AddMemberView
+            {
+                GroupId = groupId
+            };
+
+            return View(view);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddMember(AddMemberView addMember)
+        {
+            if ( ! ModelState.IsValid)
+            {
+                ViewBag.UserId = new SelectList(db.Users.OrderBy(p => p.FirstName).ThenBy(p => p.LastName), "UserId", "FullName");
+                return View(addMember);
+            }
+
+            var member = db.GroupMembers.Where(p => p.GroupId == addMember.GroupId && p.UserId == addMember.UserId).FirstOrDefault();
+
+            if(member != null)
+            {
+                ViewBag.UserId = new SelectList(db.Users.OrderBy(p => p.FirstName).ThenBy(p => p.LastName), "UserId", "FullName");
+                ViewBag.Error = "The user already belongs to group";
+                return View(addMember);
+            }
+
+            member = new GroupMember
+            {
+                GroupId = addMember.GroupId,
+                UserId = addMember.UserId
+            };
+
+            db.GroupMembers.Add(member);
+            db.SaveChanges();
+
+            return RedirectToAction(string.Format("Details/{0}", addMember.GroupId));
+
+        }
+
         // GET: Groups
         public ActionResult Index()
         {
@@ -33,7 +79,14 @@ namespace VotacionesWebSite.Controllers
             {
                 return HttpNotFound();
             }
-            return View(group);
+
+            var groupDatailsView = new GroupDetailsView
+            {
+                GroupId = group.GroupId,
+                Description = group.Description,
+                Members = group.GroupMembers.ToList()
+            };
+            return View(groupDatailsView);
         }
 
         // GET: Groups/Create

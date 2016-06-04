@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VotacionesWebSite.Models
@@ -25,6 +26,9 @@ namespace VotacionesWebSite.Models
         [Display(Name = "Last name")]
         public string LastName { get; set; }
 
+        [Display(Name = "User")]
+        public string FullName { get { return string.Format("{0} {1}",this.FirstName,this.LastName); } }
+
         [Required(ErrorMessage = "The field {0} is required")]
         [StringLength(20, ErrorMessage = "The field {0} must contain maximum {1} and minimum {2} characteres", MinimumLength = 7)]
         public string Phone { get; set; }
@@ -40,6 +44,8 @@ namespace VotacionesWebSite.Models
         [DataType(DataType.ImageUrl)]
         public string Photo { get; set; }
 
+        //Relations
+        public virtual ICollection<GroupMember> GroupMembers { get; set; }
 
 
     }

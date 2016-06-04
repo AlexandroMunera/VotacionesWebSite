@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace VotacionesWebSite.Models
 {
@@ -10,6 +11,10 @@ namespace VotacionesWebSite.Models
         [Required(ErrorMessage = "The field {0} is required")]
         [StringLength(50, ErrorMessage = "The field {0} must contain maximum {1} and minimum {2} characteres", MinimumLength = 3)]
         public string Description { get; set; }
+
+        //Relations
+        public virtual ICollection<GroupMember> GroupMembers { get; set; }
+
 
     }
 }

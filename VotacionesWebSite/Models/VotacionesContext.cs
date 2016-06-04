@@ -17,7 +17,6 @@ namespace VotacionesWebSite.Models
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
         }
 
-
         public DbSet<State> States { get; set; }
 
         public DbSet<Group> Groups { get; set; }
@@ -25,5 +24,8 @@ namespace VotacionesWebSite.Models
         public DbSet<Voting> Votings { get; set; }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<GroupMember> GroupMembers { get; set; }
+
     }
 }
