@@ -210,6 +210,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\StatesController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\VotingsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -228,6 +229,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\State.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Models\VotacionesContext.cs" />
     <Compile Include="Models\Voting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -308,6 +310,11 @@
     <Content Include="Views\Votings\Details.cshtml" />
     <Content Include="Views\Votings\Edit.cshtml" />
     <Content Include="Views\Votings\Index.cshtml" />
+    <Content Include="Views\User\Create.cshtml" />
+    <Content Include="Views\User\Delete.cshtml" />
+    <Content Include="Views\User\Details.cshtml" />
+    <Content Include="Views\User\Edit.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
