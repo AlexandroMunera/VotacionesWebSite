@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace VotacionesWebSite.Models
@@ -51,6 +52,8 @@ namespace VotacionesWebSite.Models
 
         //Relations
         public virtual State State { get; set; }
+
+        public virtual ICollection<VotingGroup> VotingGroups { get; set; }
 
 
 

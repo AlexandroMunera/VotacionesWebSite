@@ -15,6 +15,7 @@ namespace VotacionesWebSite.Models
         //Relations
         public virtual ICollection<GroupMember> GroupMembers { get; set; }
 
+        public virtual ICollection<VotingGroup> VotingGroups { get; set; }
 
     }
 }

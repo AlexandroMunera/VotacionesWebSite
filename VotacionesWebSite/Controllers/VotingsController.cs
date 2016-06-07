@@ -15,6 +15,48 @@ namespace VotacionesWebSite.Controllers
     {
         private VotacionesContext db = new VotacionesContext();
 
+        public ActionResult AddGroup(int id)
+        {
+            if (id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            ViewBag.GroupId = new SelectList(db.Groups.OrderBy(p => p.Description), "GroupId", "Description");
+
+            var votingGroup = new VotingGroup
+            {
+                VotingId = id
+            };
+
+            return View(votingGroup);
+        }
+
+        [HttpPost]
+        public ActionResult AddGroup(VotingGroup view)
+        {
+            if (ModelState.IsValid)
+            {
+                var votingGroup = db.VotingGroups.Where(p => p.VotingId == view.VotingId && p.GroupId == view.GroupId).FirstOrDefault();
+
+                if (votingGroup != null)
+                {
+                    ViewBag.Error = "The group already belongs to voting";
+                    ViewBag.GroupId = new SelectList(db.Groups.OrderBy(p => p.Description), "GroupId", "Description", view.GroupId);
+                    return View(view);
+                }
+
+                db.VotingGroups.Add(view);
+                db.SaveChanges();
+                return RedirectToAction(string.Format("Details/{0}", view.VotingId));
+            }
+
+            ViewBag.GroupId = new SelectList(db.Groups.OrderBy(p => p.Description), "GroupId", "Description", view.GroupId);
+
+            return View(view);
+        }
+
+
         // GET: Votings
         public ActionResult Index()
         {
@@ -40,7 +82,7 @@ namespace VotacionesWebSite.Controllers
         // GET: Votings/Create
         public ActionResult Create()
         {
-            ViewBag.StateId = new SelectList(db.States, "StateId", "Description");
+            ViewBag.StateId = new SelectList(db.States.OrderBy(p => p.Description), "StateId", "Description");
             return View();
         }
 

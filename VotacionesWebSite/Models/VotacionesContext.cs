@@ -27,5 +27,7 @@ namespace VotacionesWebSite.Models
 
         public DbSet<GroupMember> GroupMembers { get; set; }
 
+        public DbSet<VotingGroup> VotingGroups { get; set; }
+
     }
 }

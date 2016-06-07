@@ -15,6 +15,19 @@ namespace VotacionesWebSite.Controllers
     {
         private VotacionesContext db = new VotacionesContext();
 
+        public ActionResult DeleteMember(int id)
+        {
+            var member = db.GroupMembers.Find(id);
+
+            if (member != null)
+            {
+                db.GroupMembers.Remove(member);
+                db.SaveChanges();
+            }
+
+            return RedirectToAction(string.Format("Details/{0}", member.GroupId));
+        }
+
         public ActionResult AddMember(int id)
         {
             var groupId = id;           

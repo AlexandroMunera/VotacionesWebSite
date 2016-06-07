@@ -64,7 +64,7 @@ else
                     }
                 </td>
                 <td>
-                    @Html.ActionLink("Delete", "DeleteMember", new { id = Model.Members[i].GroupMemberId }, new { @class = "btn btn-danger" })
+                    @Html.ActionLink("Delete", "DeleteMember", new { id = Model.Members[i].GroupMemberId }, new { @class = "btn btn-danger", onclick = "return confirm('Are you sure to delete this member?');" })
                 </td>
             </tr>
         }
