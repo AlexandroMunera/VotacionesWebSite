@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace VotacionesWebSite.Models
 {
-    public class Voting
+    public class DetailsVotingView
     {
-        [Key]
+        
         public int VotingId { get; set; }
 
         [Required(ErrorMessage = "The field {0} is required")]
@@ -24,7 +27,7 @@ namespace VotacionesWebSite.Models
         [Required(ErrorMessage = "The field {0} is required")]
         [Display(Name = "Date start")]
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm tt}",ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm tt}", ApplyFormatInEditMode = true)]
         public DateTime DateTimeStart { get; set; }
 
         [Required(ErrorMessage = "The field {0} is required")]
@@ -51,12 +54,11 @@ namespace VotacionesWebSite.Models
         public int CandidateWinId { get; set; }
 
         //Relations
-        public virtual State State { get; set; }
+        public State State { get; set; }
 
-        public virtual ICollection<VotingGroup> VotingGroups { get; set; }
+        public List<VotingGroup> VotingGroups { get; set; }
 
-        public virtual ICollection<Candidate> Candidates { get; set; }
-
+        public List<Candidate> Candidates { get; set; }
 
     }
 }

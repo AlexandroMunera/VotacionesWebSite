@@ -1,12 +1,10 @@
-﻿@model VotacionesWebSite.Models.AddMemberView
+﻿@model VotacionesWebSite.Models.AddCandidateView
 
 @{
-    ViewBag.Title = "Add Member";
+    ViewBag.Title = "Add Candidate";
 }
 
-<h2>Add member to group</h2>
-
-<h3 class="alert alert-danger">@ViewBag.Error</h3>
+<h2>Add candidate to voting</h2>
 
 @using (Html.BeginForm())
 {
@@ -16,7 +14,7 @@
         <h4>Voting</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.GroupId)
+        @Html.HiddenFor(model => model.VotingId)
 
 
         <div class="form-group">
@@ -29,14 +27,14 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Add Member" class="btn btn-primary" />
+                <input type="submit" value="Add Candidate" class="btn btn-primary" />
             </div>
         </div>
     </div>
 }
 
 <div>
-    @Html.ActionLink("Back to group", "Details",new { id = Model.GroupId },new { @class = "btn btn-success" })
+    @Html.ActionLink("Back to voting", "Details", new { id = Model.VotingId }, new { @class = "btn btn-success" })
 </div>
 
 @section Scripts {

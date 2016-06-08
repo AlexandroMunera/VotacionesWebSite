@@ -15,6 +15,68 @@ namespace VotacionesWebSite.Controllers
     {
         private VotacionesContext db = new VotacionesContext();
 
+        public ActionResult AddCandidate(int id)
+        {
+            if (id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+
+            var addCandidate = new AddCandidateView
+            {
+                VotingId = id
+            };
+
+            ViewBag.UserId = new SelectList(db.Users.OrderBy(p => p.FirstName).ThenBy(p => p.LastName), "UserId", "FullName");
+
+            return View(addCandidate);
+        }
+
+        [HttpPost]
+        public ActionResult AddCandidate(AddCandidateView view)
+        {
+            if (ModelState.IsValid)
+            {
+                var candidate = db.Candidates.Where(p => p.VotingId == view.VotingId && p.UserId == view.UserId).FirstOrDefault();
+
+                if (candidate != null)
+                {
+                    ModelState.AddModelError(string.Empty, "The candidate already belongs to voting.");
+                    ViewBag.UserId = new SelectList(db.Users.OrderBy(p => p.FirstName).ThenBy(p => p.LastName), "UserId", "FullName");
+                    return View(view);
+                }
+
+                candidate = new Candidate
+                {
+                    UserId = view.UserId,
+                    VotingId = view.VotingId
+                };
+
+                db.Candidates.Add(candidate);
+                db.SaveChanges();
+                return RedirectToAction(string.Format("Details/{0}", view.VotingId));
+            }
+
+            ViewBag.UserId = new SelectList(db.Users.OrderBy(p => p.FirstName).ThenBy(p => p.LastName), "UserId", "FullName");
+
+            return View(view);
+        }
+
+        public ActionResult DeleteGroup(int id)
+        {
+            var votingGroup = db.VotingGroups.Find(id);
+
+            if (votingGroup != null)
+            {
+                db.VotingGroups.Remove(votingGroup);
+                db.SaveChanges();
+            }
+
+            return RedirectToAction(string.Format("Details/{0}", votingGroup.VotingId));
+        }
+
+
         public ActionResult AddGroup(int id)
         {
             if (id == 0)
@@ -41,7 +103,7 @@ namespace VotacionesWebSite.Controllers
 
                 if (votingGroup != null)
                 {
-                    ViewBag.Error = "The group already belongs to voting";
+                    ModelState.AddModelError(string.Empty, "The group already belongs to voting.");
                     ViewBag.GroupId = new SelectList(db.Groups.OrderBy(p => p.Description), "GroupId", "Description", view.GroupId);
                     return View(view);
                 }
@@ -55,7 +117,19 @@ namespace VotacionesWebSite.Controllers
 
             return View(view);
         }
+               
+        public ActionResult DeleteCandidate(int id)
+        {
+            var candidate = db.Candidates.Find(id);
 
+            if (candidate != null)
+            {
+                db.Candidates.Remove(candidate);
+                db.SaveChanges();
+            }
+
+            return RedirectToAction(string.Format("Details/{0}", candidate.VotingId));
+        }
 
         // GET: Votings
         public ActionResult Index()
@@ -71,12 +145,31 @@ namespace VotacionesWebSite.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Voting voting = db.Votings.Find(id);
+            var voting = db.Votings.Find(id);
             if (voting == null)
             {
                 return HttpNotFound();
             }
-            return View(voting);
+
+            var detailsVotingView = new DetailsVotingView
+            {
+                Candidates = voting.Candidates.ToList(),
+                CandidateWinId = voting.CandidateWinId,
+                DateTimeStart = voting.DateTimeStart,
+                DateTimeEnd = voting.DateTimeEnd,
+                Description = voting.Description,
+                IsEnableBlankVote = voting.IsEnableBlankVote,
+                IsForAllUsers = voting.IsForAllUsers,
+                QuantityBlankVotes = voting.QuantityBlankVotes,
+                QuantityVotes = voting.QuantityVotes,
+                Remarks = voting.Remarks,
+                State = voting.State,
+                StateId = voting.StateId,
+                VotingGroups = voting.VotingGroups.ToList(),
+                VotingId = voting.VotingId
+            };
+
+            return View(detailsVotingView);
         }
 
         // GET: Votings/Create
@@ -160,6 +253,7 @@ namespace VotacionesWebSite.Controllers
             Voting voting = db.Votings.Find(id);
             db.Votings.Remove(voting);
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
