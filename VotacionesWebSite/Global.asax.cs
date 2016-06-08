@@ -14,13 +14,20 @@ namespace VotacionesWebSite
     {
         protected void Application_Start()
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<Models.VotacionesContext, Migrations.Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<Models.VotacionesContext, Migrations.Configuration>()); //Cada vez que ejecuto la aplicacion verifica si la base de datos cambio
+
+            this.CheckSuperUser();
 
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+
+        private void CheckSuperUser()
+        {
+            throw new NotImplementedException();
         }
     }
 }

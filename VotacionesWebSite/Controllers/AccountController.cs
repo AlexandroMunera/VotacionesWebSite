@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using VotacionesWebSite.Models;
+using System.IO;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace VotacionesWebSite.Controllers
 {
@@ -22,7 +24,7 @@ namespace VotacionesWebSite.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -34,9 +36,9 @@ namespace VotacionesWebSite.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -120,7 +122,7 @@ namespace VotacionesWebSite.Controllers
             // Si un usuario introduce códigos incorrectos durante un intervalo especificado de tiempo, la cuenta del usuario 
             // se bloqueará durante un período de tiempo especificado. 
             // Puede configurar el bloqueo de la cuenta en IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -147,16 +149,50 @@ namespace VotacionesWebSite.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(RegisterUserView userView)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                //Upload photo
+                string path = string.Empty;
+                string pic = string.Empty;
+
+                if (userView.Photo != null)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    pic = Path.GetFileName(userView.Photo.FileName);
+                    path = Path.Combine(Server.MapPath("~/Content/Photos"), pic);
+                    userView.Photo.SaveAs(path);
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        userView.Photo.InputStream.CopyTo(ms);
+                        byte[] array = ms.GetBuffer();
+                    }
+                }
+
+                //Save record
+                var user = new User
+                {
+                    Address = userView.Address,
+                    FirstName = userView.FirstName,
+                    LastName = userView.LastName,
+                    Grade = userView.Grade,
+                    Group = userView.Group,
+                    Phone = userView.Phone,
+                    Photo = string.IsNullOrEmpty(pic) ? string.Empty : string.Format("~/Content/Photos/{0}", pic),
+                    UserName = userView.UserName
+                };
+
+                var db = new VotacionesContext();
+                db.Users.Add(user);
+
+                try
+                {
+                    db.SaveChanges();
+                    //If no error, create a user for loggin
+                    var userASP = this.CreateASPUser(userView);
+
+                    await SignInManager.SignInAsync(userASP, isPersistent: false, rememberBrowser: false);
+
                     // Para obtener más información sobre cómo habilitar la confirmación de cuenta y el restablecimiento de contraseña, visite http://go.microsoft.com/fwlink/?LinkID=320771
                     // Enviar correo electrónico con este vínculo
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -164,12 +200,60 @@ namespace VotacionesWebSite.Controllers
                     // await UserManager.SendEmailAsync(user.Id, "Confirmar cuenta", "Para confirmar la cuenta, haga clic <a href=\"" + callbackUrl + "\">aquí</a>");
 
                     return RedirectToAction("Index", "Home");
+
                 }
-                AddErrors(result);
+                catch (Exception ex)
+                {
+                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("UserNameIndex"))
+                    {
+                        ModelState.AddModelError(string.Empty, "This email has already used for another user");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, ex.Message);
+                    }
+
+                    return View(userView);
+                }
+
             }
 
             // Si llegamos a este punto, es que se ha producido un error y volvemos a mostrar el formulario
-            return View(model);
+            return View(userView);
+        }
+
+        private ApplicationUser CreateASPUser(RegisterUserView userView)
+        {
+            //user managment
+            var userContext = new ApplicationDbContext();
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(userContext));
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(userContext));
+
+            //Create userRole
+            string roleName = "User";
+
+            //Check to see if role exist if it doesn't create it
+            if (!roleManager.RoleExists(roleName))
+            {
+                roleManager.Create(new IdentityRole(roleName));
+            }
+
+            //create the ASPNetUser
+            var userASP = new ApplicationUser
+            {
+                UserName = userView.UserName,
+                Email = userView.UserName,
+                PhoneNumber = userView.Phone,
+            };
+
+            userManager.Create(userASP, userView.Password);
+
+            //add user to role
+            userASP = userManager.FindByName(userView.UserName);
+            userManager.AddToRole(userASP.Id, "User");
+
+            return userASP;
+
         }
 
         //
