@@ -1,13 +1,13 @@
-﻿@model VotacionesWebSite.Models.UserView
+﻿@model VotacionesWebSite.Models.UserSettingsView
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "My Settings";
 }
 
-<h2>Edit</h2>
+<h2>My Settings</h2>
 
 
-@using (Html.BeginForm("Edit", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("MySettings", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
@@ -70,10 +70,10 @@
                 </div>
 
                 <div class="form-group">
-                    @Html.LabelFor(model => model.Photo, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.LabelFor(model => model.NewPhoto, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         <span class="btn btn-default btn-file">
-                            @Html.TextBoxFor(modelo => modelo.Photo, new { type = "file" })
+                            @Html.TextBoxFor(modelo => modelo.NewPhoto, new { type = "file" })
                         </span>
                     </div>
                 </div>
@@ -86,20 +86,17 @@
                 </div>
             </div>
             <div class="col-md-5">
-                @if (!string.IsNullOrEmpty(ViewBag.Photo))
+                @if (!string.IsNullOrEmpty(Model.Photo))
                 {
-                    <img src="@Url.Content(ViewBag.Photo.ToString())" alt="Photo" style="width:300px;height:300px;max-width:100%;height:auto;" />
+                    <img src="@Url.Content(Model.Photo)" alt="Photo" style="width:300px;height:300px;max-width:100%;height:auto;" />
                 }
-
             </div>
         </div>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
-
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+

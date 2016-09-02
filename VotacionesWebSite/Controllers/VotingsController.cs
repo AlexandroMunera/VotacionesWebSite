@@ -10,11 +10,28 @@ using VotacionesWebSite.Models;
 
 namespace VotacionesWebSite.Controllers
 {
-    [Authorize]
     public class VotingsController : Controller
     {
         private VotacionesContext db = new VotacionesContext();
 
+        [Authorize(Roles = "User")]
+        public ActionResult MyVotings()
+        {
+            var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
+
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "There an error with the current user, call the support");
+                return View();
+            }
+
+            // Get event votings for the current time
+            //var votings = db.Votings.Where(p => p.user);
+
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
         public ActionResult AddCandidate(int id)
         {
             if (id == 0)
@@ -34,6 +51,7 @@ namespace VotacionesWebSite.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult AddCandidate(AddCandidateView view)
         {
             if (ModelState.IsValid)
@@ -63,6 +81,7 @@ namespace VotacionesWebSite.Controllers
             return View(view);
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteGroup(int id)
         {
             var votingGroup = db.VotingGroups.Find(id);
@@ -77,6 +96,7 @@ namespace VotacionesWebSite.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         public ActionResult AddGroup(int id)
         {
             if (id == 0)
@@ -95,6 +115,7 @@ namespace VotacionesWebSite.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult AddGroup(VotingGroup view)
         {
             if (ModelState.IsValid)
@@ -117,7 +138,8 @@ namespace VotacionesWebSite.Controllers
 
             return View(view);
         }
-               
+
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteCandidate(int id)
         {
             var candidate = db.Candidates.Find(id);
@@ -132,6 +154,7 @@ namespace VotacionesWebSite.Controllers
         }
 
         // GET: Votings
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
             var votings = db.Votings.Include(v => v.State);
@@ -139,6 +162,7 @@ namespace VotacionesWebSite.Controllers
         }
 
         // GET: Votings/Details/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -173,6 +197,7 @@ namespace VotacionesWebSite.Controllers
         }
 
         // GET: Votings/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             ViewBag.StateId = new SelectList(db.States.OrderBy(p => p.Description), "StateId", "Description");
@@ -184,6 +209,7 @@ namespace VotacionesWebSite.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create([Bind(Include = "votingId,Description,StateId,Remarks,DateTimeStart,DateTimeEnd,IsForAllUsers,IsEnableBlankVote,QuantityVotes,QuantityBlankVotes,CandidateWinId")] Voting voting)
         {
             if (ModelState.IsValid)
@@ -198,6 +224,7 @@ namespace VotacionesWebSite.Controllers
         }
 
         // GET: Votings/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -218,6 +245,7 @@ namespace VotacionesWebSite.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit([Bind(Include = "votingId,Description,StateId,Remarks,DateTimeStart,DateTimeEnd,IsForAllUsers,IsEnableBlankVote,QuantityVotes,QuantityBlankVotes,CandidateWinId")] Voting voting)
         {
             if (ModelState.IsValid)
@@ -231,6 +259,7 @@ namespace VotacionesWebSite.Controllers
         }
 
         // GET: Votings/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -248,6 +277,7 @@ namespace VotacionesWebSite.Controllers
         // POST: Votings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             Voting voting = db.Votings.Find(id);

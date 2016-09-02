@@ -238,6 +238,8 @@
     <Compile Include="Models\RegisterUserView.cs" />
     <Compile Include="Models\State.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserIndexView.cs" />
+    <Compile Include="Models\UserSettingsView.cs" />
     <Compile Include="Models\UserView.cs" />
     <Compile Include="Models\VotacionesContext.cs" />
     <Compile Include="Models\Voting.cs" />
@@ -251,6 +253,10 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\myVoting.png" />
+    <Content Include="Content\Images\results.png" />
+    <Content Include="Content\Images\settings.png" />
+    <Content Include="Content\Images\vote.png" />
     <Content Include="Content\Photos\AlexandroMunera.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -344,6 +350,7 @@
     <Content Include="Views\Groups\AddMember.cshtml" />
     <Content Include="Views\Votings\AddGroup.cshtml" />
     <Content Include="Views\Votings\AddCandidate.cshtml" />
+    <Content Include="Views\User\MySettings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

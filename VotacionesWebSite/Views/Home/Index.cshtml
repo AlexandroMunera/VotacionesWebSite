@@ -3,29 +3,45 @@
 }
 
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <div class="row">
+        <div class="col-md-7">
+            <h1>Voting System</h1>
+            <p class="lead">Voting system for you election.</p>
+            @if (!this.User.IsInRole("Admin") && !this.User.IsInRole("User"))
+            {
+                <p class="lead">To use the system, please log in with email and password, if you not register, you can register into system.</p>
+
+            }
+            <p><a href="" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-5">
+            <img src="@Url.Content("~/Content/Images/vote.png")" alt ="Vote" style="width:400px;height:auto;"  />
+        </div>
+    </div>
 </div>
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Getting started</h2>
+        <h2>My Settings</h2>
         <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
+            Change your personal information and password.
         </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        <img src="@Url.Content("~/Content/Images/settings.png")" alt="Vote" style="width:150px;height:auto;" />
+
+        @Html.ActionLink("My Settings", "MySettings", "User", null,new { @class = "btn btn-primary" })
     </div>
     <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        <h2>My Votings</h2>
+        <p>Vote for the different candidates.</p>
+        <img src="@Url.Content("~/Content/Images/myVoting.png")" alt="Vote" style="width:150px;height:auto;" />
+
+        @Html.ActionLink("My Votings", "MyVotings", "Votings", null, new { @class = "btn btn-warning" })
     </div>
     <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <h2>Results</h2>
+        <p>See the votation results.</p>
+        <img src="@Url.Content("~/Content/Images/results.png")" alt="Vote" style="width:150px;height:auto; display:inline-block" />
+
+        @Html.ActionLink("Results", "Results", "Votings", null, new { @class = "btn btn-info" })
     </div>
 </div>

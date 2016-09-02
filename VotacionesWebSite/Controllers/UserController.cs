@@ -13,18 +13,73 @@ using VotacionesWebSite.Models;
 
 namespace VotacionesWebSite.Controllers
 {
-    [Authorize]
     public class UserController : Controller
     {
-        private VotacionesContext db = new VotacionesContext();
+        private VotacionesContext db = new VotacionesContext();      
+        
+        [Authorize(Roles = "Admin")]
+        public ActionResult OnOffAdmin(int id)
+        {
+            var user = db.Users.Find(id);
+
+            if (user != null)
+            {
+                var userContext = new ApplicationDbContext();
+                var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(userContext));
+                var userASP = userManager.FindByEmail(user.UserName);
+
+                if (userASP != null)
+                {
+                    if (userManager.IsInRole(userASP.Id,"Admin"))
+                    {
+                        userManager.RemoveFromRole(userASP.Id, "Admin");
+                    }
+                    else
+                    {
+                        userManager.AddToRole(userASP.Id, "Admin");
+                    }
+                }              
+
+            }
+
+            return RedirectToAction("Index");
+        }
 
         // GET: User
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
-            return View(db.Users.ToList());
+            var userContext = new ApplicationDbContext();
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(userContext));
+            var users = db.Users.ToList();
+            var usersView = new List<UserIndexView>();
+
+            foreach (var user in users)
+            {
+                var userASP = userManager.FindByEmail(user.UserName);
+
+                usersView.Add(new UserIndexView
+                {
+                    Address = user.Address,
+                    Candidates = user.Candidates,
+                    FirstName = user.FirstName,
+                    Grade = user.Grade,
+                    Group = user.Group,
+                    GroupMembers = user.GroupMembers,
+                    IsAdmin = userASP != null && userManager.IsInRole(userASP.Id,"Admin"),
+                    LastName = user.LastName,
+                    Phone = user.Phone,
+                    Photo = user.Photo,
+                    UserId = user.UserId,
+                    UserName = user.UserName
+                });
+            }
+
+            return View(usersView);
         }
 
         // GET: User/Details/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -40,6 +95,7 @@ namespace VotacionesWebSite.Controllers
         }
 
         // GET: User/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -50,6 +106,7 @@ namespace VotacionesWebSite.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(UserView userView)
         {
             if ( ! ModelState.IsValid)
@@ -147,6 +204,7 @@ namespace VotacionesWebSite.Controllers
         }
 
         // GET: User/Edit/5
+        [Authorize(Roles = "Admin, User")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -173,6 +231,8 @@ namespace VotacionesWebSite.Controllers
                 UserName = user.UserName
             };
 
+            ViewBag.Photo = user.Photo;
+
             return View(userView);
         }
 
@@ -181,6 +241,7 @@ namespace VotacionesWebSite.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit( UserView userView)
         {
             if ( ! ModelState.IsValid)
@@ -225,7 +286,83 @@ namespace VotacionesWebSite.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin, User")]
+        public ActionResult MySettings()
+        {
+            var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
+
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            var view = new UserSettingsView
+            {
+                Address = user.Address,
+                FirstName = user.FirstName,
+                Grade = user.Grade,
+                Group = user.Group,
+                LastName = user.LastName,
+                Phone = user.Phone,
+                Photo = user.Photo,
+                UserId = user.UserId,
+                UserName = user.UserName
+            };
+
+            return View(view);
+            //RedirectToAction(string.Format("Edit/{0}",user.UserId));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
+        public ActionResult MySettings(UserSettingsView view)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(view);
+            }
+
+            //Upload photo
+            string path = string.Empty;
+            string pic = string.Empty;
+
+            if (view.NewPhoto != null)
+            {
+                pic = Path.GetFileName(view.NewPhoto.FileName);
+                path = Path.Combine(Server.MapPath("~/Content/Photos"), pic);
+                view.NewPhoto.SaveAs(path);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    view.NewPhoto.InputStream.CopyTo(ms);
+                    byte[] array = ms.GetBuffer();
+                }
+            }
+
+            var user = db.Users.Find(view.UserId);
+
+            user.Address = view.Address;
+            user.FirstName = view.FirstName;
+            user.Grade = view.Grade;
+            user.Group = view.Group;
+            user.LastName = view.LastName;
+            user.Phone = view.Phone;
+
+            if (!string.IsNullOrEmpty(pic))
+            {
+                user.Photo = string.Format("~/Content/Photos/{0}", pic);
+
+            }
+
+            db.Entry(user).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return RedirectToAction("Index","Home");
+        }
+
+
         // GET: User/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -243,11 +380,30 @@ namespace VotacionesWebSite.Controllers
         // POST: User/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             User user = db.Users.Find(id);
             db.Users.Remove(user);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("REFERENCE"))
+                {
+                    ModelState.AddModelError(String.Empty, "The record can't be deleted, because has related records");
+                }
+                else
+                {
+                    ModelState.AddModelError(String.Empty, ex.Message);
+                }
+
+                return View(user);
+            }
+
             return RedirectToAction("Index");
         }
 

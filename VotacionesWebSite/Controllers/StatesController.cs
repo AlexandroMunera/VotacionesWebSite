@@ -9,7 +9,7 @@ using VotacionesWebSite.Models;
 
 namespace VotacionesWebSite.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class StatesController : Controller
     {
         private VotacionesContext db = new VotacionesContext();
