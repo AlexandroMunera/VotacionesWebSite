@@ -72,6 +72,7 @@ namespace VotacionesWebSite
             }
 
             userManager.AddToRole(userASP.Id, "Admin");
+            userManager.AddToRole(userASP.Id, "User");
 
 
 

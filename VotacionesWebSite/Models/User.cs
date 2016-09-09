@@ -50,6 +50,9 @@ namespace VotacionesWebSite.Models
 
         public virtual ICollection<Candidate> Candidates { get; set; }
 
+        public virtual ICollection<VotingDetail> VotingDetails { get; set; }
+
+
 
     }
 }

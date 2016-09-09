@@ -31,6 +31,8 @@ namespace VotacionesWebSite.Models
 
         public DbSet<Candidate> Candidates { get; set; }
 
+        public DbSet<VotingDetail> VotingDetails { get; set; }
+
 
     }
 }

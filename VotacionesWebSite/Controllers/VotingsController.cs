@@ -26,9 +26,78 @@ namespace VotacionesWebSite.Controllers
             }
 
             // Get event votings for the current time
-            //var votings = db.Votings.Where(p => p.user);
+            var state = this.GetState("Open");
 
-            return View();
+            var votings = db.Votings
+                          .Include(p => p.Candidates).Include(p => p.VotingGroups).Include(p => p.State).ToList();
+
+            //var votings = db.Votings.Where(p => p.StateId == state.StateId &&
+            //  p.DateTimeStart <= DateTime.Now && p.DateTimeEnd >= DateTime.Now)
+            //  .Include(p => p.Candidates).Include(p => p.VotingGroups).Include(p => p.State).ToList();
+
+            //Discard events in the wich the user already vote
+            for (int i = 0; i < votings.Count; i++)
+            {
+                int userId = user.UserId;
+                int votingId = votings[i].VotingId;
+
+                var votingDetail = db.VotingDetails.Where(p => p.VotingId == votingId && p.UserId == userId);
+
+                if (votingDetail != null)
+                {
+                    votings.RemoveAt(i);
+                }
+            }
+
+            //Discard events by groups in wich the user are not include
+
+            for (int i = 0; i < votings.Count; i++)
+            {
+                if (!votings[i].IsForAllUsers)
+                {
+
+                    bool userBelongsToGroup = false;
+
+                    foreach (var votingGroup in votings[i].VotingGroups)
+                    {
+                        var userGroup = votingGroup.Group.GroupMembers.Where(p => p.UserId == user.UserId).FirstOrDefault();
+
+                        if (userGroup != null)
+                        {
+                            userBelongsToGroup = true;
+                            break;
+                        }
+                    }
+
+                    if (!userBelongsToGroup)
+                    {
+                        votings.RemoveAt(i);
+                    }
+
+                }
+            }
+
+            return View(votings);
+        }
+
+        private State GetState(string stateName)
+        {
+            var state = db.States.Where(p => p.Description.Equals(stateName)).FirstOrDefault();
+
+            if (state == null)
+            {
+                state = new State
+                {
+                    Description = stateName
+                };
+
+                db.States.Add(state);
+                db.SaveChanges();
+
+            }
+
+
+            return state;
         }
 
         [Authorize(Roles = "Admin")]
