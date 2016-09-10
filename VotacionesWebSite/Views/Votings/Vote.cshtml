@@ -82,11 +82,11 @@
                                 }
                             </td>
                             <td>
-                                @Html.ActionLink("Vote", "VoteCandidate", new
-                               {
-                                   cadidateId = Model.MyCandidates[i].CandidateId,
-                                   votingId = Model.MyCandidates[i].VotingId
-                               },
+                                @Html.ActionLink("Vote", "VoteForCandidate", new
+                           {
+                               candidateId = Model.MyCandidates[i].CandidateId,
+                               votingId = Model.MyCandidates[i].VotingId
+                           },
                            new
                            {
                                @class = "btn btn-primary",

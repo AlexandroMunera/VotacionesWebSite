@@ -15,6 +15,83 @@ namespace VotacionesWebSite.Controllers
         private VotacionesContext db = new VotacionesContext();
 
         [Authorize(Roles = "User")]
+        public ActionResult Results()
+        {
+            var votings = db.Votings.Include(p => p.State);
+            return View(votings.ToList());
+        }
+
+        [Authorize(Roles = "User")]
+        public ActionResult VoteForCandidate(int candidateId,int votingId)
+        {
+            var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
+
+            if (user == null)
+            {
+                //Falta poner mensajes y devolver a myVottings
+                return RedirectToAction("MyVotings");
+            }
+
+            var candidate = db.Candidates.Find(candidateId);
+            if (candidate == null)
+            {
+                //Falta poner mensajes y devolver a myVottings
+                return RedirectToAction("MyVotings");
+            }
+
+            var voting = db.Votings.Find(votingId);
+            if (voting == null)
+            {
+                //Falta poner mensajes y devolver a myVottings
+                return RedirectToAction("MyVotings");
+            }
+
+            if (VoteCandidate(user, candidate, voting))
+            {
+                return RedirectToAction("MyVotings");
+            }
+
+
+            return RedirectToAction("Index","Home");
+        }
+
+        private bool VoteCandidate(User user, Candidate candidate, Voting voting)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                var votingDetail = new VotingDetail {
+                    CandidateId = candidate.CandidateId,
+                    DateTime = DateTime.Now,
+                    UserId = user.UserId,
+                    VotingId = voting.VotingId
+                };
+
+                db.VotingDetails.Add(votingDetail);
+
+                candidate.QuantityVotes++;
+                db.Entry(candidate).State = EntityState.Modified;
+
+                voting.QuantityVotes++;
+                db.Entry(voting).State = EntityState.Modified;
+
+                try
+                {
+                    db.SaveChanges();
+                    transaction.Commit();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return false;
+                }
+
+                
+            }
+            return false;
+        }
+
+        [Authorize(Roles = "User")]
         public ActionResult Vote(int votingId)
         {
             var voting = db.Votings.Find(votingId);
@@ -38,37 +115,33 @@ namespace VotacionesWebSite.Controllers
             // Get event votings for the current time
             var state = this.GetState("Open");
 
-            var votings = db.Votings.Include(p => p.Candidates).Include(p => p.VotingGroups).Include(p => p.State)
-                          .ToList();
 
-            //var votings = db.Votings.Where(p => p.StateId == state.StateId &&
-            //  p.DateTimeStart <= DateTime.Now && p.DateTimeEnd >= DateTime.Now)
-            //  .Include(p => p.Candidates).Include(p => p.VotingGroups).Include(p => p.State).ToList();
+            var votings = db.Votings.Where(p => p.StateId == state.StateId &&
+              p.DateTimeStart <= DateTime.Now && p.DateTimeEnd >= DateTime.Now)
+              .Include(p => p.Candidates).Include(p => p.VotingGroups).Include(p => p.State).ToList();
 
             //Discard events in the wich the user already vote
-            for (int i = 0; i < votings.Count; i++)
+            foreach (var voting in votings.ToList())
             {
-                int userId = user.UserId;
-                int votingId = votings[i].VotingId;
 
-                var votingDetail = db.VotingDetails.Where(p => p.VotingId == votingId && p.UserId == userId).FirstOrDefault();
+                var votingDetail = db.VotingDetails.Where(p => p.VotingId == voting.VotingId && p.UserId == user.UserId).FirstOrDefault();
 
                 if (votingDetail != null)
                 {
-                    votings.RemoveAt(i);
+                    votings.Remove(voting);
                 }
             }
 
             ////Discard events by groups in wich the user are not include
 
-            for (int i = 0; i < votings.Count; i++)
+            foreach (var voting in votings.ToList())
             {
-                if (!votings[i].IsForAllUsers)
+                if (!voting.IsForAllUsers)
                 {
 
                     bool userBelongsToGroup = false;
 
-                    foreach (var votingGroup in votings[i].VotingGroups)
+                    foreach (var votingGroup in voting.VotingGroups)
                     {
                         var userGroup = votingGroup.Group.GroupMembers.Where(p => p.UserId == user.UserId).FirstOrDefault();
 
@@ -81,7 +154,7 @@ namespace VotacionesWebSite.Controllers
 
                     if (!userBelongsToGroup)
                     {
-                        votings.RemoveAt(i);
+                        votings.Remove(voting);
                     }
 
                 }
