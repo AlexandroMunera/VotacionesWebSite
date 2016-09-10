@@ -14,11 +14,63 @@ namespace VotacionesWebSite.Controllers
     {
         private VotacionesContext db = new VotacionesContext();
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult CloseVoting(int id)
+        {
+            var voting = db.Votings.Find(id);
+
+            if (voting != null)
+            {
+                var candidate = db.Candidates.Where(p => p.VotingId == id)
+                    .OrderByDescending(p => p.QuantityVotes).FirstOrDefault();
+
+                if (candidate != null)
+                {
+                    var state = GetState("Closed");
+                    voting.StateId = state.StateId;
+                    voting.CandidateWinId = candidate.UserId;
+                    db.Entry(voting).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
+
         public ActionResult Results()
         {
-            var votings = db.Votings.Include(p => p.State);
-            return View(votings.ToList());
+            var state = this.GetState("closed");
+            var votings = db.Votings.Where( p => p.StateId == state.StateId).Include(v => v.State);
+            var views = new List<VotingIndexView>();
+            var db2 = new VotacionesContext();
+            foreach (var voting in votings)
+            {
+                User user = null;
+
+                if (voting.CandidateWinId != 0)
+                {
+                    user = db2.Users.Find(voting.CandidateWinId);
+                }
+
+                views.Add(new VotingIndexView
+                {
+                    CandidateWinId = voting.CandidateWinId,
+                    DateTimeEnd = voting.DateTimeEnd,
+                    DateTimeStart = voting.DateTimeStart,
+                    Description = voting.Description,
+                    IsEnableBlankVote = voting.IsEnableBlankVote,
+                    IsForAllUsers = voting.IsForAllUsers,
+                    QuantityBlankVotes = voting.QuantityBlankVotes,
+                    QuantityVotes = voting.QuantityVotes,
+                    Remarks = voting.Remarks,
+                    StateId = voting.StateId,
+                    State = voting.State,
+                    VotingId = voting.VotingId,
+                    Winner = user,
+
+                });
+            }
+            return View(views);
         }
 
         [Authorize(Roles = "User")]
@@ -310,7 +362,37 @@ namespace VotacionesWebSite.Controllers
         public ActionResult Index()
         {
             var votings = db.Votings.Include(v => v.State);
-            return View(votings.ToList());
+            var views = new List<VotingIndexView>();
+            var db2 = new VotacionesContext();
+            foreach (var voting in votings)
+            {
+                User user = null;
+
+                if (voting.CandidateWinId != 0)
+                {
+                    user = db2.Users.Find(voting.CandidateWinId);
+                }
+
+                views.Add(new VotingIndexView
+                {
+                    CandidateWinId = voting.CandidateWinId,
+                    DateTimeEnd = voting.DateTimeEnd,
+                    DateTimeStart = voting.DateTimeStart,
+                    Description = voting.Description,
+                    IsEnableBlankVote = voting.IsEnableBlankVote,
+                    IsForAllUsers = voting.IsForAllUsers,
+                    QuantityBlankVotes = voting.QuantityBlankVotes,
+                    QuantityVotes = voting.QuantityVotes,
+                    Remarks = voting.Remarks,
+                    StateId = voting.StateId,
+                    State = voting.State,
+                    VotingId = voting.VotingId,
+                    Winner = user,
+
+                });
+            }
+
+            return View(views);
         }
 
         // GET: Votings/Details/5

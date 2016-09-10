@@ -1,4 +1,4 @@
-﻿@model IEnumerable<VotacionesWebSite.Models.Voting>
+﻿@model IEnumerable<VotacionesWebSite.Models.VotingIndexView>
 @{
     ViewBag.Title = "Results";
 }
@@ -34,7 +34,7 @@
             @Html.DisplayNameFor(model => model.QuantityBlankVotes)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CandidateWinId)
+            Winner
         </th>
         <th></th>
     </tr>
@@ -69,7 +69,7 @@
                 @Html.DisplayFor(modelItem => item.QuantityBlankVotes)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CandidateWinId)
+                @Html.DisplayFor(modelItem => item.Winner.FullName)
             </td>
             <td>
                 @Html.ActionLink("Results", "ShowResults", new { id = item.VotingId }, new { @class = "btn btn-primary" })
