@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VotacionesWebSite.Models
 {
@@ -58,6 +59,9 @@ namespace VotacionesWebSite.Models
         public virtual ICollection<Candidate> Candidates { get; set; }
 
         public virtual ICollection<VotingDetail> VotingDetails { get; set; }
+
+        [NotMapped]
+        public List<Candidate> MyCandidates { get; set; }
 
 
     }

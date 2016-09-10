@@ -353,6 +353,7 @@
     <Content Include="Views\Votings\AddCandidate.cshtml" />
     <Content Include="Views\User\MySettings.cshtml" />
     <Content Include="Views\Votings\MyVotings.cshtml" />
+    <Content Include="Views\Votings\Vote.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -15,6 +15,16 @@ namespace VotacionesWebSite.Controllers
         private VotacionesContext db = new VotacionesContext();
 
         [Authorize(Roles = "User")]
+        public ActionResult Vote(int votingId)
+        {
+            var voting = db.Votings.Find(votingId);
+
+            voting.MyCandidates = voting.Candidates.ToList();
+
+            return View(voting);
+        }
+
+        [Authorize(Roles = "User")]
         public ActionResult MyVotings()
         {
             var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
@@ -28,8 +38,8 @@ namespace VotacionesWebSite.Controllers
             // Get event votings for the current time
             var state = this.GetState("Open");
 
-            var votings = db.Votings
-                          .Include(p => p.Candidates).Include(p => p.VotingGroups).Include(p => p.State).ToList();
+            var votings = db.Votings.Include(p => p.Candidates).Include(p => p.VotingGroups).Include(p => p.State)
+                          .ToList();
 
             //var votings = db.Votings.Where(p => p.StateId == state.StateId &&
             //  p.DateTimeStart <= DateTime.Now && p.DateTimeEnd >= DateTime.Now)
@@ -41,7 +51,7 @@ namespace VotacionesWebSite.Controllers
                 int userId = user.UserId;
                 int votingId = votings[i].VotingId;
 
-                var votingDetail = db.VotingDetails.Where(p => p.VotingId == votingId && p.UserId == userId);
+                var votingDetail = db.VotingDetails.Where(p => p.VotingId == votingId && p.UserId == userId).FirstOrDefault();
 
                 if (votingDetail != null)
                 {
@@ -49,7 +59,7 @@ namespace VotacionesWebSite.Controllers
                 }
             }
 
-            //Discard events by groups in wich the user are not include
+            ////Discard events by groups in wich the user are not include
 
             for (int i = 0; i < votings.Count; i++)
             {
